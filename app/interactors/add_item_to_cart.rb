@@ -10,28 +10,6 @@ class AddItemToCart
   private
 
   def buscar_ou_criar_carrinho
-    # TODO: você vai preencher isso
-  end
-
-  def verificar_item_existente
-    # TODO: você vai preencher isso
-  end
-
-  def adicionar_ou_atualizar_item
-    # TODO: você vai preencher isso
-  end
-endclass AddItemToCart
-  include Interactor
-
-  def call
-    buscar_ou_criar_carrinho
-    verificar_item_existente
-    adicionar_ou_atualizar_item
-  end
-
-  private
-
-  def buscar_ou_criar_carrinho
     context.cart = Cart.find_or_create_by(user_id: context.user_id)
   end
 

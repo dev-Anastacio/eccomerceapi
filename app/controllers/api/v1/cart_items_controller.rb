@@ -7,8 +7,8 @@ class Api::V1::CartItemsController < ApplicationController
   end
 
   def create
-    result = AddItemToCart.call(
-    user_id: current_user.id,
+  result = AddItemToCart.call(
+    user_id: params[:user_id],  # ← mude aqui
     product_id: params[:product_id],
     quantity: params[:quantity]
   )
@@ -36,7 +36,7 @@ class Api::V1::CartItemsController < ApplicationController
   private
 
   def set_cart_item
-    @cart_item = CartItem.find(params[:id])
+  @cart_item = CartItem.find(params[:id])  # ← volte para :id
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Cart item not found" }, status: :not_found
   end
