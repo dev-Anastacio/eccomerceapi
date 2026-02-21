@@ -2,19 +2,31 @@ class AddItemToCart
   include Interactor
 
   def call
-    buscar_ou_criar_carrinho
-    verificar_item_existente
+    validar_parametros
+    buscar_carrinho
+    verificar_produtos
     adicionar_ou_atualizar_item
   end
 
   private
 
-  def buscar_ou_criar_carrinho
-    context.cart = Cart.find_or_create_by(user_id: context.user_id)
+  def validar_parametros
+    unless context.user_id && context.product_id && context.quantity
+      context.fail!(error: "Parâmetros insuficientes: user_id, product_id e quantity são necessários.")
+    end
   end
 
-  def verificar_item_existente
-    context.cart_item = context.cart.cart_items.find_by(product_id: context.product_id)
+  def buscar_carrinho
+    context.cart = Cart.find_by(user_id: context.user_id)
+    unless context.cart
+      context.fail!(error: "Carrinho não encontrado para o usuário informado.")
+    end
+  end
+  def verificar_produtos
+    context.product = Product.find_by(id: context.product_id)
+    unless context.product
+      context.fail!(error: "Produto não encontrado.")
+    end
   end
 
   def adicionar_ou_atualizar_item

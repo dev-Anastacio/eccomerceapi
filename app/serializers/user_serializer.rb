@@ -1,6 +1,4 @@
-class ProductSerializer < Blueprinter::Base
+class UserSerializer < Blueprinter::Base
   identifier :id
-
-  fields :name, :email
-  association :Product, blueprint: ProductSerializer
+  fields :name, :email, :address
 end

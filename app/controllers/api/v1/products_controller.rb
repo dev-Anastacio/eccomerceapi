@@ -1,6 +1,6 @@
 module Api
   module V1
-    class ProductController < ApplicationController 
+    class ProductsController < ApplicationController 
       before_action :set_product , only: [:show, :update, :destroy]
       
       def index
