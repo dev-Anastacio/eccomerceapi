@@ -1,18 +1,31 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :users do 
+      resources :users do
         resource :cart, only: [:show]
       end
+      
       resources :products
-      resources :cart_items, only: [:create, :index, :destroy, :update]
+      resources :cart_items
+
+      # Rotas de carrinhos abandonados
+      resources :abandoned_carts, only: [:index, :show] do
+        member do
+          post :recover
+        end
+        
+        collection do
+          get :stats
+        end
+      end
     end
   end
+
+  # Rota para visualizar emails em desenvolvimento (comentado temporariamente)
+  # if Rails.env.development?
+  #   mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  # end
+
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 end
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  # Defines the root path route ("/")
-  # root "posts#index"

@@ -1,0 +1,15 @@
+Olá <%= @user.name %>,
+
+Você esqueceu <%= @cart_items.count %> item(ns) no seu carrinho:
+
+<% @cart_items.each do |item| %>
+- <%= item.product.name %>
+  Quantidade: <%= item.quantity %> × R$ <%= item.product.price %> = R$ <%= item.product.price * item.quantity %>
+<% end %>
+
+Total: R$ <%= @total %>
+
+Finalize sua compra agora: <%= @recovery_link %>
+
+---
+Este é um email automático de recuperação de carrinho. Se você não deseja receber mais emails como este, por favor, ignore esta mensagem.

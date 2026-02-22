@@ -22,6 +22,7 @@ class AddItemToCart
       context.fail!(error: "Carrinho não encontrado para o usuário informado.")
     end
   end
+
   def verificar_produtos
     context.product = Product.find_by(id: context.product_id)
     unless context.product
@@ -30,10 +31,22 @@ class AddItemToCart
   end
 
   def adicionar_ou_atualizar_item
+    # Busca item existente do mesmo produto no carrinho
+    context.cart_item = context.cart.cart_items.find_by(product_id: context.product_id)
+    
     if context.cart_item
-      context.cart_item.update(quantity: context.cart_item.quantity + context.quantity)
+      # Atualiza quantidade do item existente
+      nova_quantidade = context.cart_item.quantity + context.quantity.to_i
+      context.cart_item.update!(quantity: nova_quantidade)
     else
-      context.cart_item = CartItem.create!(cart: context.cart, product_id: context.product_id, quantity: context.quantity)
+      # Cria novo item
+      context.cart_item = CartItem.create!(
+        cart: context.cart, 
+        product_id: context.product_id, 
+        quantity: context.quantity.to_i
+      )
     end
+  rescue ActiveRecord::RecordInvalid => e
+    context.fail!(error: e.message)
   end
 end

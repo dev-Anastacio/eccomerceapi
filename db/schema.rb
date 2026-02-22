@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_17_015442) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_22_024044) do
+  create_table "abandoned_carts", force: :cascade do |t|
+    t.integer "cart_id", null: false
+    t.decimal "cart_total", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.integer "notification_count", default: 0
+    t.datetime "notified_at"
+    t.datetime "recovered_at"
+    t.string "status", default: "pending"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["cart_id", "status"], name: "index_abandoned_carts_on_cart_id_and_status"
+    t.index ["cart_id"], name: "index_abandoned_carts_on_cart_id"
+    t.index ["notified_at"], name: "index_abandoned_carts_on_notified_at"
+    t.index ["user_id"], name: "index_abandoned_carts_on_user_id"
+  end
+
   create_table "cart_items", force: :cascade do |t|
     t.integer "cart_id"
     t.datetime "created_at", null: false
@@ -44,4 +60,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_015442) do
     t.string "password_digest"
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "abandoned_carts", "carts"
+  add_foreign_key "abandoned_carts", "users"
 end

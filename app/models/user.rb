@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_one :cart, dependent: :destroy
+  has_many :abandoned_carts, dependent: :destroy
 
   # Criar carrinho automaticamente após criar usuário
   after_create :create_user_cart
