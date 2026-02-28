@@ -3,7 +3,6 @@ module Api
     class AbandonedCartsController < ApplicationController
       def index
         @abandoned_carts = AbandonedCart.includes(:user, cart: :cart_items).order(created_at: :desc).limit(50)
-        
         render json: @abandoned_carts.as_json(
           include: {
             user: { only: [:id, :name, :email] },
@@ -41,10 +40,9 @@ module Api
       def recover
         @abandoned_cart = AbandonedCart.find(params[:id])
         @abandoned_cart.mark_as_recovered!
-        
-        render json: { 
+        render json: {
           message: "Carrinho marcado como recuperado!",
-          abandoned_cart: @abandoned_cart 
+          abandoned_cart: @abandoned_cart
         }
       end
 
@@ -69,7 +67,6 @@ module Api
       def calculate_recovery_rate
         total = AbandonedCart.where(status: ['recovered', 'notified']).count
         return 0 if total.zero?
-        
         recovered = AbandonedCart.recovered.count
         ((recovered.to_f / total) * 100).round(2)
       end

@@ -41,7 +41,7 @@ class AbandonedCart < ApplicationRecord
   end
 
   def can_notify?
-    pending? && notification_count < 3 # Máximo 3 notificações
+    pending? && notification_count < 3
   end
 
   def time_since_abandoned

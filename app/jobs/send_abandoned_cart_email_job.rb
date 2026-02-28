@@ -14,7 +14,7 @@ class SendAbandonedCartEmailJob < ApplicationJob
 
     Rails.logger.info "📧 Enviando email de recuperação para #{abandoned_cart.user.email}"
 
-    # Enviar email (vamos criar o mailer no próximo passo)
+    # Enviar email
     AbandonedCartMailer.recovery_email(abandoned_cart).deliver_later
 
     # Marcar como notificado
