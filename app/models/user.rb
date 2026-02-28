@@ -1,5 +1,7 @@
 class User < ApplicationRecord
-  has_secure_password
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
   has_one :cart, dependent: :destroy
   has_many :abandoned_carts, dependent: :destroy
 
@@ -7,8 +9,12 @@ class User < ApplicationRecord
   after_create :create_user_cart
 
   validates :name, presence: true
-  validates :email, presence: true, uniqueness: true  
-  validates :password, presence: true, length: { minimum: 6 }, on: :create
+
+  enum :role, { user: "user", admin: "admin" }, default: :user
+
+  def can_manage_products?
+    admin?
+  end
 
   private
 
