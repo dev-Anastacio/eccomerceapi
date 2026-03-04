@@ -2,7 +2,7 @@ class AbandonedCart < ApplicationRecord
   belongs_to :cart
   belongs_to :user
 
-  # Status possíveis (sintaxe correta para Rails 8)
+  # Status possíveis
   enum :status, {
     pending: 'pending',
     notified: 'notified',
@@ -15,7 +15,7 @@ class AbandonedCart < ApplicationRecord
   validates :status, presence: true, inclusion: { in: statuses.keys }
   validates :notification_count, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
 
-  # Scopes para cada status (CORRIGIDO)
+  # Scopes para cada status
   scope :pending, -> { where(status: 'pending') }
   scope :notified, -> { where(status: 'notified') }
   scope :recovered, -> { where(status: 'recovered') }
@@ -32,7 +32,7 @@ class AbandonedCart < ApplicationRecord
       .where('notification_count < ?', 3)
   }
 
-  # Callbacks (CORRIGIDO: apenas em updates)
+  # Callbacks apenas em updates)
   before_update :check_expiration
 
   # Métodos de mudança de status

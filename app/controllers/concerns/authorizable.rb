@@ -3,7 +3,7 @@ module Authorizable
 
   included do
     # Executa antes das ações, exceto index e show
-    before_action :require_admin, except: [:index, :show]
+    before_action :require_admin, except: [ :index, :show ]
   end
 
   private
@@ -21,9 +21,7 @@ module Authorizable
     end
   end
 
-  # Helper para usar nas views
   def current_user_is_admin?
     current_user&.admin?
   end
-  helper_method :current_user_is_admin?
 end
