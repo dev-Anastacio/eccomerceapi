@@ -16,7 +16,7 @@ class AbandonedCart < ApplicationRecord
   validates :notification_count, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
 
   # Scopes para cada status
-  scope :pending, -> { where(status: 'pending') }
+  scope :pending, -> { where(status: 'pending') }z
   scope :notified, -> { where(status: 'notified') }
   scope :recovered, -> { where(status: 'recovered') }
   scope :expired, -> { where(status: 'expired') }

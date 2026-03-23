@@ -1,5 +1,12 @@
 class ApplicationController < ActionController::API
-  # ActionController::API não possui helper_method (é exclusivo de views).
-  # Devise tenta chamá-lo para registrar current_user, então definimos como no-op.
   def self.helper_method(*_args); end
+
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name])
+  end
 end

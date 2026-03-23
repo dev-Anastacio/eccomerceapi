@@ -1,17 +1,23 @@
 module Api
   module V1
     class AbandonedCartsController < ApplicationController
+      before_action :authenticate_user!
+      before_action :require_admin
+      before_action :set_abandoned_cart, only: [:show, :recover]
+
       def index
-        @abandoned_carts = AbandonedCart.includes(:user, cart: :cart_items).order(created_at: :desc).limit(50)
+        @abandoned_carts = AbandonedCart
+          .includes(:user, cart: { cart_items: :product })
+          .order(created_at: :desc)
+          .limit(50)
+
         render json: @abandoned_carts.as_json(
           include: {
             user: { only: [:id, :name, :email] },
             cart: {
               include: {
                 cart_items: {
-                  include: {
-                    product: { only: [:id, :name, :price] }
-                  }
+                  include: { product: { only: [:id, :name, :price] } }
                 }
               }
             }
@@ -20,16 +26,13 @@ module Api
       end
 
       def show
-        @abandoned_cart = AbandonedCart.find(params[:id])
         render json: @abandoned_cart.as_json(
           include: {
             user: { only: [:id, :name, :email] },
             cart: {
               include: {
                 cart_items: {
-                  include: {
-                    product: { only: [:id, :name, :price] }
-                  }
+                  include: { product: { only: [:id, :name, :price] } }
                 }
               }
             }
@@ -38,7 +41,14 @@ module Api
       end
 
       def recover
-        @abandoned_cart = AbandonedCart.find(params[:id])
+        if @abandoned_cart.recovered?
+          return render json: { error: "Carrinho já foi recuperado." }, status: :unprocessable_entity
+        end
+
+        if @abandoned_cart.expired?
+          return render json: { error: "Carrinho expirado, não pode ser recuperado." }, status: :unprocessable_entity
+        end
+
         @abandoned_cart.mark_as_recovered!
         render json: {
           message: "Carrinho marcado como recuperado!",
@@ -47,28 +57,21 @@ module Api
       end
 
       def stats
-        stats = {
-          total_abandoned: AbandonedCart.count,
-          pending: AbandonedCart.pending.count,
-          notified: AbandonedCart.notified.count,
-          recovered: AbandonedCart.recovered.count,
-          expired: AbandonedCart.expired.count,
-          total_value_abandoned: AbandonedCart.pending.sum(:cart_total),
-          total_value_recovered: AbandonedCart.recovered.sum(:cart_total),
-          recovery_rate: calculate_recovery_rate,
-          average_cart_value: AbandonedCart.average(:cart_total).to_f.round(2)
-        }
-
-        render json: stats
+        render json: AbandonedCart.statistics
       end
 
       private
 
-      def calculate_recovery_rate
-        total = AbandonedCart.where(status: ['recovered', 'notified']).count
-        return 0 if total.zero?
-        recovered = AbandonedCart.recovered.count
-        ((recovered.to_f / total) * 100).round(2)
+      def set_abandoned_cart
+        @abandoned_cart = AbandonedCart.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Carrinho abandonado não encontrado." }, status: :not_found
+      end
+
+      def require_admin
+        unless current_user&.admin?
+          render json: { error: "Acesso negado. Apenas admins." }, status: :forbidden
+        end
       end
     end
   end

@@ -1,11 +1,13 @@
 module Api
   module V1
     class CartItemsController < ApplicationController
+      before_action :authenticate_user!
+      before_action :set_cart
       before_action :set_cart_item, only: [:show, :update, :destroy]
 
       def index
-        @cart_items = CartItem.all.includes(:product)
-        render json: CartItemSerializer.render(@cart_items), status: :ok
+        cart_items = @cart.cart_items.includes(:product)
+        render json: CartItemSerializer.render(cart_items), status: :ok
       end
 
       def show
@@ -13,16 +15,17 @@ module Api
       end
 
       def create
-        @cart = Cart.find(params[:cart_id])
-        @cart_item = @cart.cart_items.build(cart_item_params)
+        result = AddItemToCart.call(
+          user_id: current_user.id,
+          product_id: cart_item_params[:product_id],
+          quantity: cart_item_params[:quantity]
+        )
 
-        if @cart_item.save
-          render json: CartItemSerializer.render(@cart_item), status: :created
+        if result.success?
+          render json: CartItemSerializer.render(result.cart_item), status: :created
         else
-          render json: { errors: @cart_item.errors.full_messages }, status: :unprocessable_entity
+          render json: { error: result.error }, status: :unprocessable_entity
         end
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "Cart not found" }, status: :not_found
       end
 
       def update
@@ -40,8 +43,12 @@ module Api
 
       private
 
+      def set_cart
+        @cart = current_user.cart || current_user.create_cart
+      end
+
       def set_cart_item
-        @cart_item = CartItem.find(params[:id])
+        @cart_item = @cart.cart_items.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Cart item not found" }, status: :not_found
       end
