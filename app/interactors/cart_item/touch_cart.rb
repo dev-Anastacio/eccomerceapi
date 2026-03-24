@@ -1,4 +1,4 @@
-class AddItemToCart::TouchCart
+class CartItem::TouchCart
   include Interactor
 
   def call

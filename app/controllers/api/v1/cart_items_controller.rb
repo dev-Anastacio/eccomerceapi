@@ -15,7 +15,7 @@ module Api
       end
 
       def create
-        result = AddItemToCart.call(
+        result = CartItem::AddItemToCart.call(
           user_id: current_user.id,
           product_id: cart_item_params[:product_id],
           quantity: cart_item_params[:quantity]

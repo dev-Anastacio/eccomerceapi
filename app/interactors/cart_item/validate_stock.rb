@@ -1,4 +1,4 @@
-class AddItemToCart::ValidateStock
+class CartItem::ValidateStock
   include Interactor
 
   def call

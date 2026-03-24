@@ -1,4 +1,4 @@
-class AddItemToCart::ValidateParams
+class CartItem::ValidateParams
   include Interactor
 
   def call

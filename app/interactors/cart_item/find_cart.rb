@@ -1,4 +1,4 @@
-class AddItemToCart::FindCart
+class CartItem::FindCart
   include Interactor
 
   def call

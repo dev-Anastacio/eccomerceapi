@@ -1,4 +1,4 @@
-class AddItemToCart::UpsertCartItem
+class CartItem::UpsertCartItem
   include Interactor
 
   def call
