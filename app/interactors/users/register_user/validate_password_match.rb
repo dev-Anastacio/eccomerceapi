@@ -1,4 +1,4 @@
-Class Users::RegisterUser::ValidatePasswordMatch
+class Users::RegisterUser::ValidatePasswordMatch
   include Interactor
 
   def call
@@ -6,3 +6,4 @@ Class Users::RegisterUser::ValidatePasswordMatch
       context.fail!(message: "As senhas não coincidem.")
     end
   end
+end

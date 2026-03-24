@@ -1,11 +1,11 @@
-Class Users::RegisterUser::CreateUser
+class Users::RegisterUser::CreateUser
   include Interactor
 
   def call
     user = User.new(
-      name: context.name,
-      email: context.email,
-      password: context.password,
+      name:                  context.name,
+      email:                 context.email,
+      password:              context.password,
       password_confirmation: context.password_confirmation
     )
 
@@ -15,4 +15,4 @@ Class Users::RegisterUser::CreateUser
       context.fail!(message: user.errors.full_messages.to_sentence)
     end
   end
-
+end
