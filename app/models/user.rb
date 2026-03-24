@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
   has_one :cart, dependent: :destroy
   has_many :abandoned_carts, dependent: :destroy
+  has_many :orders, dependent: :destroy
+  has_many :cart_histories, dependent: :destroy
 
   # Criar carrinho automaticamente após criar usuário
   after_create :create_user_cart

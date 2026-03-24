@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_28_164041) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_24_131651) do
   create_table "abandoned_carts", force: :cascade do |t|
     t.integer "cart_id", null: false
     t.decimal "cart_total", precision: 10, scale: 2
@@ -27,6 +27,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_164041) do
     t.index ["user_id"], name: "index_abandoned_carts_on_user_id"
   end
 
+  create_table "cart_histories", force: :cascade do |t|
+    t.datetime "checkout_date"
+    t.decimal "total"
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_cart_histories_on_user_id"
+  end
+
   create_table "cart_items", force: :cascade do |t|
     t.integer "cart_id"
     t.datetime "created_at", null: false
@@ -39,6 +46,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_164041) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.decimal "price"
+    t.integer "product_id", null: false
+    t.integer "quantity"
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.string "status"
+    t.decimal "total_amount"
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -69,4 +92,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_164041) do
 
   add_foreign_key "abandoned_carts", "carts"
   add_foreign_key "abandoned_carts", "users"
+  add_foreign_key "cart_histories", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "users"
 end

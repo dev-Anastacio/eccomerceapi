@@ -5,11 +5,11 @@ one:
   user: one
   notified_at: 2026-02-21 23:40:44
   recovered_at: 2026-02-21 23:40:44
-  cart_total_decimal: MyString
+  cart_total: 120.50
 
 two:
   cart: two
   user: two
   notified_at: 2026-02-21 23:40:44
   recovered_at: 2026-02-21 23:40:44
-  cart_total_decimal: MyString
+  cart_total: 89.90

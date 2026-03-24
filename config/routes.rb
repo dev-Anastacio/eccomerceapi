@@ -13,7 +13,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, except: [:create] do
-        resource :cart, only: [:show]
+        resource :cart, only: [:show] do
+          member do
+            post :checkout
+          end
+        end
       end
 
       resources :products
