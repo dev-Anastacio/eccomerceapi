@@ -2,12 +2,11 @@ module Api
   module V1
     class ProductsController < ApplicationController
       include Authorizable
-      before_action :authenticate_user!, except: [:index, :show]
-      before_action :set_product , only: [:show, :update, :destroy]
-
+      before_action :authenticate_user!, except: [ :index, :show ]
+      before_action :set_product, only: [ :show, :update, :destroy ]
 
       def index
-        @products = Product.all.order(:created_at) 
+        @products = Product.all.order(:created_at)
         render json: ProductSerializer.render(@products), status: :ok
       end
 
@@ -16,9 +15,9 @@ module Api
       end
 
       def create
-        @product = Product.new(product_params)
+        @product = current_user.products.new(product_params)
         if @product.save
-          render json: @product, status: :created
+          render json: ProductSerializer.render(@product), status: :created
         else
           render json: @product.errors.full_messages, status: :unprocessable_entity
         end
@@ -26,7 +25,7 @@ module Api
 
       def update
         if @product.update(product_params)
-          render json: @product, status: :ok
+          render json: ProductSerializer.render(@product), status: :ok
         else
           render json: @product.errors.full_messages, status: :unprocessable_entity
         end
@@ -37,7 +36,7 @@ module Api
         head :no_content
       end
 
-      private 
+      private
 
       def set_product
         @product = Product.find(params[:id])
@@ -46,7 +45,7 @@ module Api
       end
 
       def product_params
-        params.require(:product).permit(:name, :price, :description)
+        params.require(:product).permit(:name, :price, :description, :category, :stock)
       end
     end
   end

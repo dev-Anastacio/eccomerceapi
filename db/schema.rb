@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_24_131651) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_120000) do
   create_table "abandoned_carts", force: :cascade do |t|
     t.integer "cart_id", null: false
     t.decimal "cart_total", precision: 10, scale: 2
@@ -46,6 +46,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_131651) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+  end
+
+  create_table "jwt_denylist", force: :cascade do |t|
+    t.datetime "exp", null: false
+    t.string "jti", null: false
+    t.index ["jti"], name: "index_jwt_denylist_on_jti"
   end
 
   create_table "order_items", force: :cascade do |t|

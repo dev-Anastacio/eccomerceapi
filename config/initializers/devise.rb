@@ -97,7 +97,7 @@ Devise.setup do |config|
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
-  config.skip_session_storage = [ :http_auth ]
+  config.skip_session_storage = [ :http_auth, :params_auth ]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX
@@ -271,16 +271,29 @@ Devise.setup do |config|
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
- # ==> OmniAuth
- # Add a new OmniAuth provider. Check the wiki for more information on setting
- # up on your models and hooks.
- # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  # ==> OmniAuth
+  # Add a new OmniAuth provider. Check the wiki for more information on setting
+  # up on your models and hooks.
+  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
 
- # ==> Warden configuration
- # If you want to use other strategies, that are not supported by Devise, or
- # change the failure app, you can configure them inside the config.warden block.
+  # ==> Warden configuration
+  # If you want to use other strategies, that are not supported by Devise, or
+  # change the failure app, you can configure them inside the config.warden block.
   config.warden do |manager|
-    manager.scope_defaults :user, store: true
+    manager.scope_defaults :user, store: false
+  end
+
+  config.jwt do |jwt|
+    jwt.secret = ENV.fetch("DEVISE_JWT_SECRET_KEY") { Rails.application.secret_key_base }
+    jwt.dispatch_requests = [
+      [ "POST", %r{^/api/v1/users/sign_in$} ]
+    ]
+    jwt.revocation_requests = [
+      [ "DELETE", %r{^/api/v1/users/sign_out$} ]
+    ]
+    jwt.request_formats = {
+      user: [ nil, :json ]
+    }
   end
 
   # ==> Mountable engine configurations

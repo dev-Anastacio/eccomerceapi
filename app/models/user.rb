@@ -1,11 +1,14 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable,
+    :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+
   has_one :cart, dependent: :destroy
   has_many :abandoned_carts, dependent: :destroy
   has_many :orders, dependent: :destroy
   has_many :cart_histories, dependent: :destroy
+  has_many :products, dependent: :nullify
 
   # Criar carrinho automaticamente após criar usuário
   after_create :create_user_cart

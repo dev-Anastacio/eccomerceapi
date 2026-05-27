@@ -2,18 +2,19 @@ Rails.application.routes.draw do
   devise_for :users,
     path: "",
     path_names: {
-      sign_in:  'api/v1/users/sign_in',
-      sign_out: 'api/v1/users/sign_out',
-      registration: 'api/v1/users'
+      sign_in:  "api/v1/users/sign_in",
+      sign_out: "api/v1/users/sign_out",
+      registration: "api/v1/users"
     },
     controllers: {
-      registrations: 'api/v1/registrations'
+      sessions: "api/v1/sessions",
+      registrations: "api/v1/registrations"
     }
 
   namespace :api do
     namespace :v1 do
-      resources :users, except: [:create] do
-        resource :cart, only: [:show] do
+      resources :users, except: [ :create ] do
+        resource :cart, only: [ :show ] do
           member do
             post :checkout
           end
@@ -23,7 +24,7 @@ Rails.application.routes.draw do
       resources :products
       resources :cart_items
 
-      resources :abandoned_carts, only: [:index, :show] do
+      resources :abandoned_carts, only: [ :index, :show ] do
         member do
           post :recover
         end

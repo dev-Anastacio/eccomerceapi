@@ -26,12 +26,13 @@ class CheckoutFlowTest < ActionDispatch::IntegrationTest
 
     post "/api/v1/cart_items",
       params: { cart_item: { product_id: product.id, quantity: 2 } },
+      headers: auth_headers,
       as: :json
 
     assert_response :created
 
-    assert_difference ["Order.count", "OrderItem.count", "CartHistory.count"], 1 do
-      post "/api/v1/users/#{@user.id}/cart/checkout"
+    assert_difference [ "Order.count", "OrderItem.count", "CartHistory.count" ], 1 do
+      post "/api/v1/users/#{@user.id}/cart/checkout", headers: auth_headers
     end
 
     assert_response :created
@@ -47,8 +48,8 @@ class CheckoutFlowTest < ActionDispatch::IntegrationTest
   test "checkout fails when cart is empty" do
     sign_in_as(@user, @password)
 
-    assert_no_difference ["Order.count", "OrderItem.count", "CartHistory.count"] do
-      post "/api/v1/users/#{@user.id}/cart/checkout"
+    assert_no_difference [ "Order.count", "OrderItem.count", "CartHistory.count" ] do
+      post "/api/v1/users/#{@user.id}/cart/checkout", headers: auth_headers
     end
 
     assert_response :unprocessable_entity
@@ -70,8 +71,8 @@ class CheckoutFlowTest < ActionDispatch::IntegrationTest
 
     sign_in_as(@user, @password)
 
-    assert_no_difference ["Order.count", "OrderItem.count", "CartHistory.count"] do
-      post "/api/v1/users/#{@user.id}/cart/checkout"
+    assert_no_difference [ "Order.count", "OrderItem.count", "CartHistory.count" ] do
+      post "/api/v1/users/#{@user.id}/cart/checkout", headers: auth_headers
     end
 
     assert_response :unprocessable_entity
@@ -86,6 +87,12 @@ class CheckoutFlowTest < ActionDispatch::IntegrationTest
     post "/api/v1/users/sign_in",
       params: { user: { email: user.email, password: password } }
 
-    assert_includes [200, 302, 303], response.status
+    assert_response :ok
+    @auth_token = response.headers["Authorization"]
+    assert_match(/\ABearer /, @auth_token)
+  end
+
+  def auth_headers
+    { "Authorization" => @auth_token }
   end
 end
