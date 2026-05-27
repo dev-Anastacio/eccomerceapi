@@ -3,7 +3,7 @@ module Api
     class CartItemsController < ApplicationController
       before_action :authenticate_user!
       before_action :set_cart
-      before_action :set_cart_item, only: [:show, :update, :destroy]
+      before_action :set_cart_item, only: [ :show, :update, :destroy ]
 
       def index
         cart_items = @cart.cart_items.includes(:product)

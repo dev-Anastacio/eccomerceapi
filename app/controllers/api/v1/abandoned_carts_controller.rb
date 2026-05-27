@@ -3,7 +3,7 @@ module Api
     class AbandonedCartsController < ApplicationController
       before_action :authenticate_user!
       before_action :require_admin
-      before_action :set_abandoned_cart, only: [:show, :recover]
+      before_action :set_abandoned_cart, only: [ :show, :recover ]
 
       def index
         @abandoned_carts = AbandonedCart
@@ -13,11 +13,11 @@ module Api
 
         render json: @abandoned_carts.as_json(
           include: {
-            user: { only: [:id, :name, :email] },
+            user: { only: [ :id, :name, :email ] },
             cart: {
               include: {
                 cart_items: {
-                  include: { product: { only: [:id, :name, :price] } }
+                  include: { product: { only: [ :id, :name, :price ] } }
                 }
               }
             }
@@ -28,11 +28,11 @@ module Api
       def show
         render json: @abandoned_cart.as_json(
           include: {
-            user: { only: [:id, :name, :email] },
+            user: { only: [ :id, :name, :email ] },
             cart: {
               include: {
                 cart_items: {
-                  include: { product: { only: [:id, :name, :price] } }
+                  include: { product: { only: [ :id, :name, :price ] } }
                 }
               }
             }

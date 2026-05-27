@@ -6,7 +6,7 @@ class Cart::CheckoutCart::CreateOrder
     order = Order.create!(
       user_id: cart.user_id,
       total_amount: context.total,
-      status: 'pending'
+      status: "pending"
     )
 
     cart.cart_items.each do |item|

@@ -4,7 +4,6 @@ class CreateCartHistories < ActiveRecord::Migration[8.1]
       t.references :user, null: false, foreign_key: true
       t.decimal :total
       t.datetime :checkout_date
-
     end
   end
 end

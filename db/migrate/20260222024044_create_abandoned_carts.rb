@@ -12,7 +12,7 @@ class CreateAbandonedCarts < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :abandoned_carts, [:cart_id, :status]
+    add_index :abandoned_carts, [ :cart_id, :status ]
     add_index :abandoned_carts, :notified_at
   end
 end

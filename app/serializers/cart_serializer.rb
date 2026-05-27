@@ -6,9 +6,9 @@ class CartSerializer < Blueprinter::Base
     association :cart_items, blueprint: CartItemSerializer do |cart|
       cart.cart_items.includes(:product)
     end
-    
+
     field :total do |cart|
-      cart.cart_items.joins(:product).sum('products.price * cart_items.quantity')
+      cart.cart_items.joins(:product).sum("products.price * cart_items.quantity")
     end
   end
 end

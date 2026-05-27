@@ -1,5 +1,5 @@
 class AbandonedCartMailer < ApplicationMailer
-  default from: 'noreply@eccomerce.com'
+  default from: "noreply@eccomerce.com"
 
   def recovery_email(abandoned_cart)
     @abandoned_cart = abandoned_cart

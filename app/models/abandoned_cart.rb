@@ -4,11 +4,11 @@ class AbandonedCart < ApplicationRecord
 
   # Status possíveis
   enum :status, {
-    pending: 'pending',
-    notified: 'notified',
-    recovered: 'recovered',
-    expired: 'expired'
-  }, default: 'pending'
+    pending: "pending",
+    notified: "notified",
+    recovered: "recovered",
+    expired: "expired"
+  }, default: "pending"
 
   # Validações
   validates :cart_total, presence: true, numericality: { greater_than: 0 }
@@ -16,20 +16,20 @@ class AbandonedCart < ApplicationRecord
   validates :notification_count, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
 
   # Scopes para cada status
-  scope :pending, -> { where(status: 'pending') }
-  scope :notified, -> { where(status: 'notified') }
-  scope :recovered, -> { where(status: 'recovered') }
-  scope :expired, -> { where(status: 'expired') }
+  scope :pending, -> { where(status: "pending") }
+  scope :notified, -> { where(status: "notified") }
+  scope :recovered, -> { where(status: "recovered") }
+  scope :expired, -> { where(status: "expired") }
 
   # Scopes adicionais
-  scope :pending_notification, -> { where(status: 'pending') }
-  scope :notified_recently, -> { where('notified_at > ?', 24.hours.ago) }
-  scope :old, -> { where('created_at < ?', 30.days.ago) }
-  scope :high_value, -> { where('cart_total > ?', 1000) }
-  scope :can_send_reminder, -> { 
-    where(status: 'notified')
-      .where('notified_at < ?', 24.hours.ago)
-      .where('notification_count < ?', 3)
+  scope :pending_notification, -> { where(status: "pending") }
+  scope :notified_recently, -> { where("notified_at > ?", 24.hours.ago) }
+  scope :old, -> { where("created_at < ?", 30.days.ago) }
+  scope :high_value, -> { where("cart_total > ?", 1000) }
+  scope :can_send_reminder, -> {
+    where(status: "notified")
+      .where("notified_at < ?", 24.hours.ago)
+      .where("notification_count < ?", 3)
   }
 
   # Callbacks apenas em updates)
@@ -38,7 +38,7 @@ class AbandonedCart < ApplicationRecord
   # Métodos de mudança de status
   def mark_as_notified!
     update!(
-      status: 'notified',
+      status: "notified",
       notified_at: Time.current,
       notification_count: (notification_count || 0) + 1
     )
@@ -46,13 +46,13 @@ class AbandonedCart < ApplicationRecord
 
   def mark_as_recovered!
     update!(
-      status: 'recovered',
+      status: "recovered",
       recovered_at: Time.current
     )
   end
 
   def mark_as_expired!
-    update!(status: 'expired')
+    update!(status: "expired")
   end
 
   # Métodos de verificação
@@ -67,9 +67,9 @@ class AbandonedCart < ApplicationRecord
   end
 
   def should_send_reminder?
-    notified? && 
-    notified_at && 
-    notified_at < 24.hours.ago && 
+    notified? &&
+    notified_at &&
+    notified_at < 24.hours.ago &&
     (notification_count || 0) < 3
   end
 
@@ -93,7 +93,7 @@ class AbandonedCart < ApplicationRecord
       status: status,
       hours_since_abandoned: time_since_abandoned.round(1),
       notifications_sent: notification_count || 0,
-      last_notified: notified_at&.strftime('%d/%m/%Y %H:%M')
+      last_notified: notified_at&.strftime("%d/%m/%Y %H:%M")
     }
   end
 
@@ -101,7 +101,7 @@ class AbandonedCart < ApplicationRecord
   def self.statistics
     total_count = count
     notified_count = notified.count
-    
+
     {
       total: total_count,
       pending: pending.count,
@@ -118,7 +118,7 @@ class AbandonedCart < ApplicationRecord
 
   def check_expiration
     if can_expire?
-      self.status = 'expired'
+      self.status = "expired"
     end
   end
 end

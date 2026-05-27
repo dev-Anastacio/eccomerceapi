@@ -11,7 +11,7 @@ module Api
 
       def checkout
         cart = @user.cart || @user.create_cart
-        
+
         result = Cart::CheckoutCart.call(cart: cart)
 
         if result.success?

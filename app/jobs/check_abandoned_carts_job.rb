@@ -9,10 +9,9 @@ class CheckAbandonedCartsJob < ApplicationJob
 
     # Buscar carrinhos com itens que não foram atualizados há mais de 1 hora
     Cart.joins(:cart_items)
-        .where('carts.updated_at < ?', 1.hour.ago)
+        .where("carts.updated_at < ?", 1.hour.ago)
         .distinct
         .find_each do |cart|
-      
       carts_checked += 1
 
       # Verificar se já não tem um registro de abandono pendente
@@ -29,7 +28,7 @@ class CheckAbandonedCartsJob < ApplicationJob
         cart: cart,
         user: cart.user,
         cart_total: total,
-        status: 'pending'
+        status: "pending"
       )
 
       # Agendar envio de email para daqui a 5 minutos

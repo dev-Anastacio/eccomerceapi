@@ -4,7 +4,6 @@ class CreateOrders < ActiveRecord::Migration[8.1]
       t.references :user, null: false, foreign_key: true
       t.decimal :total_amount
       t.string :status
-
     end
   end
 end
